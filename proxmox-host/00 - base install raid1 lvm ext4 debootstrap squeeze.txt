@@ -46,6 +46,11 @@ mount -o bind /dev /media/dev
 mount -o bind /sys /media/sys
 chroot /media
 passwd 
+
+# disable debian default that pulls in recommended packages:
+cd /etc/apt/apt.conf.d
+wget https://www.torservers.net/misc/config/06norecommends
+
 aptitude install openssh-server tzdata locales lvm2 mdadm
 dpkg-reconfigure tzdata locales
 
