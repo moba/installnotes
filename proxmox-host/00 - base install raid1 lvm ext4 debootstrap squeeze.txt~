@@ -57,5 +57,4 @@ dpkg-reconfigure tzdata locales
 grub-install /dev/sda
 grub-install /dev/sdb
 update-grub2
-update-initramfs -u
-
+update-init
