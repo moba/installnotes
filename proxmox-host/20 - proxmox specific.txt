@@ -1,0 +1,21 @@
+## https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_Squeeze
+
+# http://wiki.hetzner.de/index.php/Proxmox_VE
+## http://catfind.it/en/2012/01/hetzner-root-server-ipv6-und-openvz/
+
+http://www.server-wissen.de/virtualisierung/proxmox/proxmox-2-0-vzdump-loscht-alte-backups-nicht/
+
+net.ipv6.conf.all.promote_secondaries = 1
+maybe:
+
+net.ipv4.conf.all.forwarding=1
+net.ipv4.conf.all.rp_filter=1
+net.ipv4.icmp_echo_ignore_broadcasts=1
+net.ipv6.conf.all.forwarding = 1
+net.ipv6.conf.default.forwarding = 1
+net.ipv6.conf.all.proxy_ndp = 1
+net.ipv4.conf.default.forwarding=1
+net.ipv4.conf.default.proxy_arp = 0
+
+ip addr del 2a02:0180:a:25:1::1 dev eth0
+

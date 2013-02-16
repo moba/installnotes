@@ -1,0 +1,39 @@
+## add user
+## ssh config: disable password auth and UsePAM. no root login; move to random port >1024
+
+# iptables. ipv6? separate!
+cd /etc
+wget https://www.torservers.net/misc/config/iptables.test.rules
+chmod 600 iptables.test.rules
+vi iptables.test.rules # example, update at least SSH port
+iptables-restore < iptables.test.rules
+## ssh ok? ....
+iptables-save > iptables.rules
+chmod 600 iptables.rules
+cd /etc/network/if-pre-up.d/
+wget https://www.torservers.net/misc/config/iptables
+chmod +x iptables
+
+aptitude install ntp dnsutils
+aptitude install logcheck logcheck-database unattended-upgrades apticron apt-listchanges
+sed -i -e 's/^# DIFF_ONLY/DIFF_ONLY/' /etc/apticron/apticron.conf # make apticron send diffs only
+
+aptitude install smartmontools
+
+# munin monitoring
+apt-get install -y munin-node
+ln -s /usr/share/munin/plugins/netstat /etc/munin/plugins/netstat
+sed "s/allow \\^127\\\.0\\\.0\\\.1\\$/allow ^123\\\.123\\\.123\\\.123$/" -i /etc/munin/munin-node.conf
+/etc/init.d/munin-node restart
+
+## generally a good idea to encrypt swap
+apt-get install cryptsetup
+swapoff -a
+# vi /etc/crypttab: swap /dev/sda2 /dev/urandom swap
+/etc/init.d/cryptdisks restart
+# vi /etc/fstab: /dev/mapper/swap none swap defaults 0 0
+swapon -a
+cat /proc/meminfo | grep SwapTotal
+
+## move /var/log to tmpfs
+## logrotate: shorter interval, add shred keyword

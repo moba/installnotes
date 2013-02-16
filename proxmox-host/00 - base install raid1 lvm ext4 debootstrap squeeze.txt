@@ -16,7 +16,7 @@ mkswap /dev/md1
 
 pvcreate /dev/md2
 vgcreate main /dev/md2
-# leave at least 512MB free for openvz, https://openvz.org/Backup_of_a_running_container_with_vzdump
+# leave at least 1024MB free for proxmox/openvz, https://openvz.org/Backup_of_a_running_container_with_vzdump
 lvcreate -n root -L 10G main
 lvcreate -n vz -L 1750G main
 lvcreate -n vzbackup -L 100G main
