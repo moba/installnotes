@@ -1,0 +1,18 @@
+apt-get install duplicity ncftp
+mkdir /backup
+chmod 700 /backup
+
+#!/bin/bash
+dpkg --get-selections > /backup/dpkg-selections
+
+export PASSPHRASE=(insert your value here)
+export FTP_PASSWORD=(insert your value here)
+export SIGN_PASSPHRASE=(insert your value here)
+
+nice -n 15 duplicity --sign-key "XXXXXXX" --encrypt-key "XXXXXXX" --asynchronous-upload --name backuptest --full-if-older-than 15D --volsize 100 --exclude /mnt --exclude /var/tmp --exclude /tmp --exclude /proc --exclude /sys --exclude /dev ftp://(insert your FTP server here) /
+
+nice -n 15 duplicity remove-older-than 6M --force ftp://(insert your FTP server here)/etc
+
+unset SIGN_PASSPHRASE
+unset PASSPHRASE
+unset FTP_PASSWORD
