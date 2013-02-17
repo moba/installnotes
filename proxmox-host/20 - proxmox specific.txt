@@ -1,13 +1,9 @@
 ## https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_Squeeze
-
-# http://wiki.hetzner.de/index.php/Proxmox_VE
+## http://wiki.hetzner.de/index.php/Proxmox_VE
 ## http://catfind.it/en/2012/01/hetzner-root-server-ipv6-und-openvz/
-
-http://www.server-wissen.de/virtualisierung/proxmox/proxmox-2-0-vzdump-loscht-alte-backups-nicht/
+## http://www.server-wissen.de/virtualisierung/proxmox/proxmox-2-0-vzdump-loscht-alte-backups-nicht/
 
 net.ipv6.conf.all.promote_secondaries = 1
-maybe:
-
 net.ipv4.conf.all.forwarding=1
 net.ipv4.conf.all.rp_filter=1
 net.ipv4.icmp_echo_ignore_broadcasts=1
@@ -17,5 +13,20 @@ net.ipv6.conf.all.proxy_ndp = 1
 net.ipv4.conf.default.forwarding=1
 net.ipv4.conf.default.proxy_arp = 0
 
-ip addr del 2a02:0180:a:25:1::1 dev eth0
+in /etc/vz/vz.conf :
+IPTABLES="ipt_REJECT ipt_tos ipt_limit ipt_multiport iptable_filter iptable_mangle ipt_TCPMSS ipt_tcpmss ipt_ttl ipt_length ipt_state"
+
+vtctl set 100 --ipadd 2a02:0180:a:25:3::1 --save
+
+# http://openvz.org/Using_NAT_for_container_with_private_IPs
+iptables -t nat -A POSTROUTING -s 192.168.2.0/25 -o eth0 -j SNAT --to SERVERIP
+iptables -A FORWARD -s 192.168.2.0/25 -j ACCEPT
+iptables -A FORWARD -d 192.168.2.0/25 -j ACCEPT
+
+-A FORWARD -s 192.168.2.0/25 -j ACCEPT
+-A FORWARD -d 192.168.2.0/25 -j ACCEPT
+
+# ecryptFS
+apt-get install ecryptfs-utils
+mount -t ecryptfs -o ecryptfs_cipher=aes -o ecryptfs_key_bytes=32 -o ecryptfs_unlink_sigs -o ecryptfs_passthrough=no -o ecryptfs_enable_filename_crypto=y -o ecryptfs_fnek_sig=df0b4fafd2cee934 /var/lib/.vz-encrypted /var/lib/vz-encrypted  
 

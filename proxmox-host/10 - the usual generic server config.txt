@@ -1,6 +1,9 @@
 ## add user
 ## ssh config: disable password auth and UsePAM. no root login; move to random port >1024
 
+cd /etc/apt/apt.conf.d
+wget https://www.torservers.net/misc/config/06norecommends
+
 # iptables. ipv6? separate!
 cd /etc
 wget https://www.torservers.net/misc/config/iptables.test.rules
