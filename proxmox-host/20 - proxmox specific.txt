@@ -2,16 +2,19 @@
 ## http://wiki.hetzner.de/index.php/Proxmox_VE
 ## http://catfind.it/en/2012/01/hetzner-root-server-ipv6-und-openvz/
 ## http://www.server-wissen.de/virtualisierung/proxmox/proxmox-2-0-vzdump-loscht-alte-backups-nicht/
+## http://kbeezie.com/ipv6-openvz-venet/
 
+/etc/sysctl.conf
 net.ipv6.conf.all.promote_secondaries = 1
-net.ipv4.conf.all.forwarding=1
-net.ipv4.conf.all.rp_filter=1
-net.ipv4.icmp_echo_ignore_broadcasts=1
+net.ipv4.conf.all.forwarding = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.icmp_echo_ignore_broadcasts = 1
 net.ipv6.conf.all.forwarding = 1
 net.ipv6.conf.default.forwarding = 1
 net.ipv6.conf.all.proxy_ndp = 1
-net.ipv4.conf.default.forwarding=1
+net.ipv4.conf.default.forwarding = 1
 net.ipv4.conf.default.proxy_arp = 0
+net.ipv6.bindv6only = 1 ?
 
 in /etc/vz/vz.conf :
 IPTABLES="ipt_REJECT ipt_tos ipt_limit ipt_multiport iptable_filter iptable_mangle ipt_TCPMSS ipt_tcpmss ipt_ttl ipt_length ipt_state"

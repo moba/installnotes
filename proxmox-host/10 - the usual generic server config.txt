@@ -38,5 +38,4 @@ swapoff -a
 swapon -a
 cat /proc/meminfo | grep SwapTotal
 
-## move /var/log to tmpfs
 ## logrotate: shorter interval, add shred keyword

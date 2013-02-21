@@ -2,17 +2,24 @@ apt-get install duplicity ncftp
 mkdir /backup
 chmod 700 /backup
 
+gpg --gen-key # generate backup signing key
+gpg --import /tmp/encrypt.key
+gpg --sign-key $ENCRYPT_FINGERPRINT
+
+## add mysqlhotcopy/mysqldump for databases
+
 #!/bin/bash
 dpkg --get-selections > /backup/dpkg-selections
 
-export PASSPHRASE=(insert your value here)
-export FTP_PASSWORD=(insert your value here)
-export SIGN_PASSPHRASE=(insert your value here)
+export PASSPHRASE=(sign passphrase)
+export FTP_PASSWORD=(ftp password)
+export SIGN_PASSPHRASE=$PASSPHRASE
 
-nice -n 15 duplicity --sign-key "XXXXXXX" --encrypt-key "XXXXXXX" --asynchronous-upload --name backuptest --full-if-older-than 15D --volsize 100 --exclude /mnt --exclude /var/tmp --exclude /tmp --exclude /proc --exclude /sys --exclude /dev ftp://(insert your FTP server here) /
+nice -n 15 duplicity --sign-key "SIGNFP" --encrypt-key "ENCRYPT_FP" --asynchronous-upload --name mailbackup --full-if-older-than 15D --volsize 100 --exclude /mnt --exclude /var/tmp --exclude /tmp --exclude /proc --exclude /sys --exclude /dev / ftp://FTPUSER@LOCATION/PATH
 
-nice -n 15 duplicity remove-older-than 6M --force ftp://(insert your FTP server here)/etc
+nice -n 15 duplicity remove-older-than 6M --force ftp://FTPUSER@LOCATION/PATH
 
 unset SIGN_PASSPHRASE
 unset PASSPHRASE
 unset FTP_PASSWORD
+
