@@ -9,6 +9,11 @@ vzctl set <CID> --quotaugidlimit 200 --save
 apt-get install libapache2-mod-removeip
 a2enmod removeip
 
+# remove postfix size limits
+# /etc/postfix/main.cf
+message_size_limit = 0
+mailbox_size_limit = 0
+
 # greylisting
 aptitude install postgrey
 # /etc/default/postgrey 
