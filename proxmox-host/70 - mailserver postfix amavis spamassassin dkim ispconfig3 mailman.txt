@@ -5,6 +5,10 @@ vzctl set <CID> --quotaugidlimit 200 --save
 ## http://www.howtoforge.com/virtual-multiserver-environment-with-dedicated-web-mysql-email-dns-servers-on-debian-squeeze-with-ispconfig-3-p2
 ## http://www.howtoforge.com/perfect-server-ubuntu-12.10-apache2-bind-dovecot-ispconfig-3-p4
 
+# don't let apache log IPs
+apt-get install libapache2-mod-removeip
+a2enmod removeip
+
 # greylisting
 aptitude install postgrey
 # /etc/default/postgrey 
