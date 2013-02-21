@@ -38,4 +38,8 @@ swapoff -a
 swapon -a
 cat /proc/meminfo | grep SwapTotal
 
+# tempfs /tmp
+# /etc/fstab
+tmpfs /tmp tmpfs defaults,noexec,nosuid 0 0
+
 ## logrotate: shorter interval, add shred keyword
