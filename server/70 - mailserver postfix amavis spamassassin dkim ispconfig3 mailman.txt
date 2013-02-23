@@ -51,6 +51,10 @@ smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, rej
 submission inet n       -       -       -       -       smtpd
   -o syslog_name=postfix/submission
   -o smtpd_tls_security_level=encrypt
+smtps     inet  n       -       -       -       -       smtpd
+  -o syslog_name=postfix/smtps
+  -o smtpd_tls_security_level=encrypt
+  -o smtpd_tls_wrappermode=yes
 # /etc/dovecot/dovecot.conf
 ssl_cert = </etc/postfix/tls/smtpd.crt
 ssl_key = </etc/postfix/tls/smtpd.key
