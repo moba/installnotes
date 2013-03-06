@@ -1,0 +1,57 @@
+# enable quota for VM
+# ON HOST! 
+vzctl set <CID> --quotaugidlimit 200 --save
+
+## http://www.howtoforge.com/virtual-multiserver-environment-with-dedicated-web-mysql-email-dns-servers-on-debian-squeeze-with-ispconfig-3-p2
+## http://www.howtoforge.com/perfect-server-ubuntu-12.10-apache2-bind-dovecot-ispconfig-3-p4
+
+apt-get install libapache2-mod-removeip
+a2enmod removeip
+
+# generate cert, sign by cacert
+mkdir /etc/apache2/ssl
+openssl genrsa -out headstrong.de.key 2048
+openssl req –new –key headstrong.de.key –out headstrong.de.csr
+# get .csr to cacert, paste signed cert into headstrong.de.crt
+wget -O - https://www.cacert.org/certs/root.crt > /etc/apache2/ssl/cacert-chain.pem
+wget -O - https://www.cacert.org/certs/class3.crt >> /etc/apache2/ssl/cacert-chain.pem
+chmod 400 /etc/apache2/ssl/*
+ln -s /etc/apache2/sites-available/default-ssl /etc/apache2/sites-enabled/000-default-ssl
+a2enmod ssl
+# /etc/apache2/sites-enabled/000-default-ssl
+SSLCertificateFile    /etc/apache2/ssl/headstrong.de.crt
+SSLCertificateKeyFile /etc/apache2/ssl/headstrong.de.key
+SSLCertificateChainFile /etc/apache2/ssl/cacert-chain.pem
+Header add Strict-Transport-Security: "max-age=15768000;includeSubdomains"
+Header add X-Frame-Options: "deny"
+Header add X-Content-Security-Policy: "default-src 'self'"
+
+# robots.txt
+User-agent: *
+Disallow: /
+
+# mysql munin stats
+ln -s /usr/share/munin/plugins/mysql_queries /etc/munin/plugins/mysql_queries
+ln -s /usr/share/munin/plugins/mysql_bytes /etc/munin/plugins/mysql_bytes
+ln -s /usr/share/munin/plugins/mysql_slowqueries /etc/munin/plugins/mysql_slowqueries
+ln -s /usr/share/munin/plugins/mysql_threads /etc/munin/plugins/mysql_threads
+wget -O /usr/share/munin/plugins/mysql_size_all https://github.com/munin-monitoring/contrib/raw/master/plugins/mysql/mysql_size_all
+chmod 755 /usr/share/munin/plugins/mysql_size_all
+ln -s /usr/share/munin/plugins/mysql_size_all /etc/munin/plugins/mysql_size_all
+
+# PureFTPD
+cd /etc/pure-ftpd/conf
+echo 4 > MaxClientsPerIP
+echo 2 > TLS # force TLS
+echo 95 > MaxDiskUsage
+echo yes > CustomerProof
+echo "58000 60000" > PassivePortRange
+/etc/init.d/pure-ftpd-mysql restart
+
+# PHP upload limits
+# /etc/php5/cgi/php.ini
+upload_max_filesize = 100M
+post_max_size = 50M
+## root mail -> user
+
+
