@@ -1,0 +1,12 @@
+apt-get install libsasl2-modules
+
+# /etc/postfix/main.cf
+mydestination = localhost
+relayhost = smtp.headstrong.de
+mynetworks = 127.0.0.0/8
+mydomain = headstrong.de
+smtp_tls_security_level = encrypt
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/smtp_auth
+smtp_sasl_security_options = noanonymous
+
