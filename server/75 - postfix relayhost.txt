@@ -10,3 +10,11 @@ smtp_sasl_auth_enable = yes
 smtp_sasl_password_maps = hash:/etc/postfix/smtp_auth
 smtp_sasl_security_options = noanonymous
 
+# /etc/postfix/smtp_auth
+smtp.headstrong.de	account:password
+
+
+postmap /etc/postfix/smtp_auth
+chown root:root /etc/postfix/smtp_auth*
+chown 600 /etc/postfix/smtp_auth*
+/etc/init.d/postfix reload
