@@ -19,12 +19,18 @@ chmod 400 /etc/apache2/ssl/*
 ln -s /etc/apache2/sites-available/default-ssl /etc/apache2/sites-enabled/000-default-ssl
 a2enmod ssl
 # /etc/apache2/sites-enabled/000-default-ssl
+SSLEngine on
 SSLCertificateFile    /etc/apache2/ssl/headstrong.de.crt
 SSLCertificateKeyFile /etc/apache2/ssl/headstrong.de.key
 SSLCertificateChainFile /etc/apache2/ssl/cacert-chain.pem
+SSLProtocol all -SSLv2
+SSLCipherSuite HIGH:!aNULL:!SSLv2:!MD5:@STRENGTH
+SSLHonorCipherOrder on
+SSLCompression off
 Header add Strict-Transport-Security: "max-age=15768000;includeSubdomains"
 Header add X-Frame-Options: "deny"
 Header add X-Content-Security-Policy: "default-src 'self'"
+Loglevel warn
 
 # robots.txt
 User-agent: *
