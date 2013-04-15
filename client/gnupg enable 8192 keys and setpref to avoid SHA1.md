@@ -1,10 +1,25 @@
 # GnuPG Notes
 
 http://gagravarr.livejournal.com/137173.html
+
 https://www.apache.org/dev/openpgp.html
+
 http://www.eharning.us/gpg/
 
-## enable 8192 bit keys
+## RSA 8192 bit keys
+
+For a 8192 bit master key, you can use GnuPG batch mode.
+
+    gpg --batch --gen-key <<EOF
+    Key-Type: RSA
+    Key-Length: 8192
+    Name-Real: ME
+    Name-Comment: COMMENT
+    Name-Email: EMAIL
+    Passphrase: PASSWORD
+    EOF
+
+If you also want to generate 8192 bit subkeys, you need to modify the GnuPG source.
 
     sudo apt-get build-dep gnupg
     apt-get source gnupg
