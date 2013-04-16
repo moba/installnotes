@@ -6,6 +6,8 @@ https://www.apache.org/dev/openpgp.html
 
 http://www.eharning.us/gpg/
 
+http://www.narf.ssji.net/~shtrom/wiki/tips/openpgpsmartcard
+
 ## RSA 8192 bit keys
 
 For a 8192 bit master key, you can use GnuPG batch mode.
@@ -75,3 +77,30 @@ Useful for testing and for offline keys. Use Live CD for offline keys!
 ## key transition statement
 
 example: http://gagravarr.org/key-transition-2009-05-06.txt
+
+## Smartcard
+
+### Install
+
+    sudo apt-get install pcscd gpgsm
+
+### Init
+
+    gpg --card-status
+    gpg --change-pin
+    gpg --card-edit
+
+### Generate Subkeys on Smartcard
+
+    gpg --edit-key $FINGERPRINT
+    gpg> addcardkey
+
+### Move Subkeys to Smartcard
+
+Make a local copy first, as subkey will be transferred to the card and the local copy rendered unusable.
+
+    gpg -a --export-secret-keys KEYID > KEYID.key.asc
+
+    gpg --edit-key $FINGERPRINT
+    gpg> keytocard
+
