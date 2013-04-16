@@ -57,18 +57,18 @@ Useful for testing and for offline keys. Use Live CD for offline keys!
 ## key generation
 
     gpg --gen-key # for master key
-    FINGERPRINT=ABCDABCD
-    gpg --edit-key $FINGERPRINT
+    KEYID=ABCDABCD
+    gpg --edit-key $KEYID
     gpg> addkey # repeat for all subkeys
     gpg> quit
-    gpg --output $FINGERPRINT-revocation-cert.gpg --gen-revoke $FINGPERPRINT
-    gpg --quiet --batch --yes --output $FINGERPRINT-secret-subkeys.gpg --export-secret-subkeys $FINGERPRINT
-    gpg --quiet --batch --yes --output $FINGERPRINT-secret-master-key.gpg --export-secret-keys $FINGERPRINT
-    gpg --quiet --batch --yes --output $FINGERPRINT-public.gpg --export $FINGERPRINT
+    gpg --output $KEYID-revocation-cert.gpg --gen-revoke $KEYID
+    gpg --quiet --batch --yes --output $KEYID-secret-subkeys.gpg --export-secret-subkeys $KEYID
+    gpg --quiet --batch --yes --output $KEYID-secret-master-key.gpg --export-secret-keys $KEYID
+    gpg --quiet --batch --yes --output $KEYID-public.gpg --export $KEYID
 
 ## regular keyring: import only subkeys
 
-    gpg --import $FINGERPRINT-public.gpg $FINGERPRINT-secret-subkeys.gpg
+    gpg --import $KEYID-public.gpg $KEYID-secret-subkeys.gpg
 
 ## when signing, specify signing policy
 
@@ -92,15 +92,15 @@ example: http://gagravarr.org/key-transition-2009-05-06.txt
 
 ### Generate Subkeys on Smartcard
 
-    gpg --edit-key $FINGERPRINT
+    gpg --edit-key $KEYID
     gpg> addcardkey
 
 ### Move Subkeys to Smartcard
 
 Make a local copy first, as subkey will be transferred to the card and the local copy rendered unusable.
 
-    gpg -a --export-secret-keys KEYID > KEYID.key.asc
+    gpg -a --export-secret-keys $KEYID > $KEYID.key.asc
 
-    gpg --edit-key $FINGERPRINT
+    gpg --edit-key $KEYID
     gpg> keytocard
 
