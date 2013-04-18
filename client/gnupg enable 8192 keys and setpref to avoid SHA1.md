@@ -8,6 +8,12 @@ http://www.eharning.us/gpg/
 
 http://www.narf.ssji.net/~shtrom/wiki/tips/openpgpsmartcard
 
+## temporarily change keystore location
+
+Useful for testing and for offline keys. Use Live CD for offline keys!
+
+    export GNUPGHOME=/save/location
+
 ## RSA 8192 bit keys
 
 For a 8192 bit master key, you can use GnuPG batch mode.
@@ -47,12 +53,6 @@ If you also want to generate 8192 bit subkeys, you need to modify the GnuPG sour
     ask-cert-level
     cert-policy-url http://www.headstrong.de/keysigning-policy
     EOF
-
-## temporarily change keystore location
-
-Useful for testing and for offline keys. Use Live CD for offline keys!
-
-    export GNUPGHOME=/save/location
 
 ## key generation
 
