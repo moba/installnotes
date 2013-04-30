@@ -43,3 +43,4 @@ cat /proc/meminfo | grep SwapTotal
 tmpfs /tmp tmpfs defaults,noexec,nosuid 0 0
 
 ## logrotate: shorter interval, add shred keyword
+## do this for both /etc/logrotate.conf and all configs in /etc/logrotate.d !
