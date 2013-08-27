@@ -27,10 +27,10 @@ apt-get install ca-certificates
 mkdir /etc/postfix/tls
 openssl req -nodes -newkey rsa:2048 -keyout /etc/postfix/tls/smtpd.key -out /etc/postfix/tls/smtpd.csr
 # get smtpd.csr signed by cacert, put the returned cert into /etc/postfix/tls/smtpd.crt
-openssl gendh -out /etc/postfix/dh_512.pem -2 512
-openssl gendh -out /etc/postfix/dh_1024.pem -2 1024
-openssl ecparam -out /etc/postfix/smtpd-ecdsa.key -name sect571r1 -genkey
-openssl req -new -nodes -key /etc/postfix/smtpd-ecdsa.key -outform pem -out /etc/postfix/smtpd-ecdsa.csr
+openssl gendh -out /etc/postfix/tls/dh_512.pem -2 512
+openssl gendh -out /etc/postfix/tls/dh_1024.pem -2 1024
+openssl ecparam -out /etc/postfix/tls/smtpd-ecdsa.key -name sect571r1 -genkey
+openssl req -new -nodes -key /etc/postfix/tls/smtpd-ecdsa.key -outform pem -out /etc/postfix/tls/smtpd-ecdsa.csr
 # get smtpd-ecdsa.csr signed by cacert, put the returned cert into smtpd-ecdsa.crt
 chmod 400 /etc/postfix/tls/*
 # /etc/postfix/main.cf
@@ -39,10 +39,10 @@ smtpd_tls_security_level = may
 smtpd_tls_cert_file = /etc/postfix/tls/smtpd.crt
 smtpd_tls_key_file = /etc/postfix/tls/smtpd.key
 smtpd_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
-smtpd_tls_eccert_file = /etc/postfix/smtpd-ecdsa.crt
-smtpd_tls_eckey_file = /etc/postfix/smtpd-ecdsa.key
-smtpd_tls_dh1024_param_file = /etc/postfix/dh_1024.pem
-smtpd_tls_dh512_param_file = /etc/postfix/dh_512.pem
+smtpd_tls_eccert_file = /etc/postfix/tls/smtpd-ecdsa.crt
+smtpd_tls_eckey_file = /etc/postfix/tls/smtpd-ecdsa.key
+smtpd_tls_dh1024_param_file = /etc/postfix/tls/dh_1024.pem
+smtpd_tls_dh512_param_file = /etc/postfix/tls/dh_512.pem
 smtpd_tls_eecdh_grade = strong
 smtpd_tls_received_header = yes
 smtp_tls_security_level = may
@@ -115,6 +115,13 @@ smtpd_recipient_restrictions =
  permit_mynetworks, permit_sasl_authenticated
  check_sender_access regexp:/etc/postfix/tag_as_foreign.re
  reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_recipient_domain, check_recipient_access mysql:/etc/postfix/mysql-virtual_recipient.cf, reject_unauth_destination, reject_rbl_client ix.dnsbl.manitu.net, reject_rbl_client sbl.spamhaus.org, check_policy_service inet:127.0.0.1:10023
+
+# anonymize IP/user 
+## http://moblog.wiredwings.com/archives/20100501/Remove-IPs-from-Outgoing-Mail-Postfix-SMTP.html
+/etc/postfix/main.cf
+ header_checks = regexp:/etc/postfix/header_checks
+/etc/postfix/header_checks
+ /^Received: .*\(Authenticated sender:.*/ IGNORE
 
 # finetune Received header
 # /etc/hosts
