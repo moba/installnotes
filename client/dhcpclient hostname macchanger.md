@@ -19,9 +19,9 @@ For now, I've disabled sending a hostname completely, as DHCP does not require i
 ### /etc/network/if-pre-up.d/macchanger 
 
     #!/bin/sh
-    /usr/bin/macchanger -a wlan0
-    /usr/bin/macchanger -a eth0
+    /usr/bin/macchanger -e wlan0
+    /usr/bin/macchanger -e eth0
 
-This should generate a random MAC from the same vendor every time you (re)start the network interface. For some reason, for me, it generates a new MAC from a random vendor instead (the argument for that should be -A).
+This generates a random MAC from the same vendor every time you (re)start the network interface. Some people prefer "-a" (any vendor of similar device), "-A" (random vendor, random device), or "-r" (fully random).
 
 Don't forget to make that script executable.
