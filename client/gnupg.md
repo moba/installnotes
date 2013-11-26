@@ -21,9 +21,8 @@ For a 8192 bit master key, you can use GnuPG batch mode.
     gpg --batch --gen-key <<EOF
     Key-Type: RSA
     Key-Length: 8192
-    Key-Usage: auth
+    Key-Usage: cert
     Name-Real: ME
-    Name-Comment: COMMENT
     Name-Email: EMAIL
     Passphrase: PASSWORD
     EOF
