@@ -101,7 +101,11 @@ Make a local copy first, as subkey will be transferred to the card and the local
     gpg -a --export-secret-keys $KEYID > $KEYID.key.asc
 
     gpg --edit-key $KEYID
+    gpg> key 1 # select encryption subkey
     gpg> keytocard
+    gpg> key 2 # select signature subkey
+    gpg> keytocard
+    gpg> save
 
 ### Authenticate to a SSH server with GPG Smartcard
 
