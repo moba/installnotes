@@ -21,9 +21,8 @@ For a 8192 bit master key, you can use GnuPG batch mode.
     gpg --batch --gen-key <<EOF
     Key-Type: RSA
     Key-Length: 8192
-    Key-Usage: auth
+    Key-Usage: cert
     Name-Real: ME
-    Name-Comment: COMMENT
     Name-Email: EMAIL
     Passphrase: PASSWORD
     EOF
@@ -102,5 +101,33 @@ Make a local copy first, as subkey will be transferred to the card and the local
     gpg -a --export-secret-keys $KEYID > $KEYID.key.asc
 
     gpg --edit-key $KEYID
+    gpg> key 1 # select encryption subkey
     gpg> keytocard
+    gpg> key 2 # select signature subkey
+    gpg> keytocard
+    gpg> save
 
+### Authenticate to a SSH server with GPG Smartcard
+
+Make a Authentication Subkey on the Smartcard
+
+    gpg --edit-key $KEYID
+    gpg> addcardkey
+    
+Then choose option 3. Enter passphrase and key when queried.
+
+Put the following in a text file, make sure it is run everytime your
+Desktop environment or window manager starts up:
+
+    #!/bin/sh
+    gpg-agent --daemon --enable-ssh-support > ~/.gpgssh.env
+    . ~/.gpgssh.env
+    
+Log out of and into your Desktop environment.
+
+Copy the Public key over to the server
+
+    gpgkey2ssh $AUTHSUBKEY > authorized_keys
+    scp authorized_keys testuser@testserver.tld:~/.ssh/authorized_keys
+    
+Now everytime you ssh into this box ssh should ask for your PIN instead of your passphrase.
