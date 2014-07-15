@@ -16,7 +16,9 @@ Useful for testing and for offline keys. Use Live CD for offline keys!
 
 ## RSA 8192 bit keys
 
-For a 8192 bit master key, you can use GnuPG batch mode.
+You don't really ever need a larger key than 4096. If there's serious advances in breaking 2048+ bit RSA keys, they will go against all keysizes.
+
+GnuPG no longer allows you to create larger keys. In previous versions, the batch mode allowed keys up to 8192 bit:
 
     gpg --batch --gen-key <<EOF
     Key-Type: RSA
@@ -26,17 +28,6 @@ For a 8192 bit master key, you can use GnuPG batch mode.
     Name-Email: EMAIL
     Passphrase: PASSWORD
     EOF
-
-If you also want to generate 8192 bit subkeys, you need to modify the GnuPG source.
-
-    sudo apt-get build-dep gnupg
-    apt-get source gnupg
-    cd gnupg-*
-    vi g10/keygen.c
-    # search 4096, replace 8192
-    dpkg-buildpackage -us -uc -nc
-    cd ..
-    dpkg -i gnupg_*.deb
 
 ## some default preferences
 
@@ -55,9 +46,15 @@ If you also want to generate 8192 bit subkeys, you need to modify the GnuPG sour
 
 ## key generation
 
-    gpg --gen-key # for master key
+My recommendation: 
+
+  * master key: capability certify ( = for signing keys)
+  * separate subkeys for each other capability
+  * set an expiration date on the master key and the subkeys. remind yourself to rotate subkeys and move the master key expiration date before it expires. i find 6 months to 1 year a reasonable span.
+  
+    gpg --expert --gen-key # for master key
     KEYID=ABCDABCD
-    gpg --edit-key $KEYID
+    gpg --expert --edit-key $KEYID
     gpg> addkey # repeat for all subkeys
     gpg> quit
     gpg --output $KEYID-revocation-cert.gpg --gen-revoke $KEYID
@@ -91,6 +88,8 @@ example: http://gagravarr.org/key-transition-2009-05-06.txt
 
 ### Generate Subkeys on Smartcard
 
+You don't actually want to do that because you will not have backup, except maybe for authentication subkeys.
+
     gpg --edit-key $KEYID
     gpg> addcardkey
 
@@ -101,10 +100,12 @@ Make a local copy first, as subkey will be transferred to the card and the local
     gpg -a --export-secret-keys $KEYID > $KEYID.key.asc
 
     gpg --edit-key $KEYID
+    gpg> toggle
     gpg> key 1 # select encryption subkey
     gpg> keytocard
     gpg> key 2 # select signature subkey
     gpg> keytocard
+    ...
     gpg> save
 
 ### Authenticate to a SSH server with GPG Smartcard
