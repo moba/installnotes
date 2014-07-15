@@ -1,33 +1,10 @@
 # GnuPG Notes
 
-http://gagravarr.livejournal.com/137173.html
-
-https://www.apache.org/dev/openpgp.html
-
-http://www.eharning.us/gpg/
-
-http://www.narf.ssji.net/~shtrom/wiki/tips/openpgpsmartcard
-
 ## temporarily change keystore location
 
 Useful for testing and for offline keys. Use Live CD for offline keys!
 
     export GNUPGHOME=/save/location
-
-## RSA 8192 bit keys
-
-You don't really ever need a larger key than 4096. If there's serious advances in breaking 2048+ bit RSA keys, they will go against all keysizes.
-
-GnuPG no longer allows you to create larger keys. In previous versions, the batch mode allowed keys up to 8192 bit:
-
-    gpg --batch --gen-key <<EOF
-    Key-Type: RSA
-    Key-Length: 8192
-    Key-Usage: cert
-    Name-Real: ME
-    Name-Email: EMAIL
-    Passphrase: PASSWORD
-    EOF
 
 ## some default preferences
 
@@ -74,6 +51,21 @@ My recommendation:
 ## key transition statement
 
 example: http://gagravarr.org/key-transition-2009-05-06.txt
+
+## RSA 8192 bit keys
+
+You don't really ever need a larger key than 4096. If there's serious advances in breaking 2048+ bit RSA keys, they will go against all keysizes.
+
+GnuPG no longer allows you to create larger keys. In previous versions, the batch mode allowed keys up to 8192 bit:
+
+    gpg --batch --gen-key <<EOF
+    Key-Type: RSA
+    Key-Length: 8192
+    Key-Usage: cert
+    Name-Real: ME
+    Name-Email: EMAIL
+    Passphrase: PASSWORD
+    EOF
 
 ## Smartcard
 
@@ -133,3 +125,15 @@ Copy the Public key over to the server
     scp authorized_keys testuser@testserver.tld:~/.ssh/authorized_keys
     
 Now everytime you ssh into this box ssh should ask for your PIN instead of your passphrase.
+
+# References
+
+# GnuPG Notes
+
+http://gagravarr.livejournal.com/137173.html
+
+https://www.apache.org/dev/openpgp.html
+
+http://www.eharning.us/gpg/
+
+http://www.narf.ssji.net/~shtrom/wiki/tips/openpgpsmartcard
