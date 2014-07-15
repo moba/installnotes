@@ -69,6 +69,20 @@ GnuPG no longer allows you to create larger keys. In previous versions, the batc
 
 ## Smartcard
 
+  * Reader: https://shop.kernelconcepts.de/product_info.php?products_id=119
+    * use reader with PIN-pad for additional security
+  
+  * Javacard: Open Source Java Applets available (running on closed source OS)
+    * can't find any cards that support keys larger than 2048
+    * https://subgraph.com/cards/
+    * http://smartcardsource.com/
+
+  * Basiccard: Closed Source
+    * developers have to sign NDA -> no open source?
+    * G10Code (Werner Koch) Smartcard: https://shop.kernelconcepts.de/product_info.php?products_id=42
+    * supports 4096 bit keys (Smartcard v2, GnuPG >= 2.0.18)
+    * https://shop.kernelconcepts.de/product_info.php?products_id=42
+
 ### Install
 
     sudo apt-get install pcscd gpgsm
