@@ -31,10 +31,6 @@ GnuPG no longer allows you to create larger keys. In previous versions, the batc
 
 ## some default preferences
 
- * hashing algorithms
- * disable version display
- * set default policy url for signing
-
     cat >>~/.gnupg/gpg.conf <<EOF
     no-version
     personal-digest-preferences SHA512
@@ -44,14 +40,14 @@ GnuPG no longer allows you to create larger keys. In previous versions, the batc
     cert-policy-url http://www.headstrong.de/keysigning-policy
     EOF
 
+  * hashing algorithms
+  * disable version display
+  * set default policy url for signing
+
 ## key generation
 
 My recommendation: 
 
-  * master key: capability certify ( = for signing keys)
-  * separate subkeys for each other capability
-  * set an expiration date on the master key and the subkeys. remind yourself to rotate subkeys and move the master key expiration date before it expires. i find 6 months to 1 year a reasonable span.
-  
     gpg --expert --gen-key # for master key
     KEYID=ABCDABCD
     gpg --expert --edit-key $KEYID
@@ -61,6 +57,11 @@ My recommendation:
     gpg --quiet --batch --yes --output $KEYID-secret-subkeys.gpg --export-secret-subkeys $KEYID
     gpg --quiet --batch --yes --output $KEYID-secret-master-key.gpg --export-secret-keys $KEYID
     gpg --quiet --batch --yes --output $KEYID-public.gpg --export $KEYID
+
+  * master key: capability certify ( = for signing keys)
+  * separate subkeys for each other capability
+  * set an expiration date on the master key and the subkeys. remind yourself to rotate subkeys and move the master key expiration date before it expires. i find 6 months to 1 year a reasonable span.
+
 
 ## regular keyring: import only subkeys
 
