@@ -76,6 +76,7 @@ GnuPG no longer allows you to create larger keys. In previous versions, the batc
     * can't find any cards that support keys larger than 2048
     * https://subgraph.com/cards/
     * http://smartcardsource.com/
+    * https://www.fi.muni.cz/~xsvenda/jcsupport.html
 
   * Basiccard: Closed Source
     * developers have to sign NDA -> no open source?
