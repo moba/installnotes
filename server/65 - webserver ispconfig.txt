@@ -11,7 +11,7 @@ a2enmod removeip
 # generate cert, sign by cacert
 mkdir /etc/apache2/ssl
 openssl genrsa -out headstrong.de.key 2048
-openssl req –new –key headstrong.de.key –out headstrong.de.csr
+openssl req –new -sha256 –key headstrong.de.key –out headstrong.de.csr
 # get .csr to cacert, paste signed cert into headstrong.de.crt
 wget -O - https://www.cacert.org/certs/root.crt > /etc/apache2/ssl/cacert-chain.pem
 wget -O - https://www.cacert.org/certs/class3.crt >> /etc/apache2/ssl/cacert-chain.pem
