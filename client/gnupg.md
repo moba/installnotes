@@ -129,21 +129,27 @@ Put the following in a text file, make sure it is run everytime your
 Desktop environment or window manager starts up:
 
     #!/bin/sh
-    gpg-agent --daemon --enable-ssh-support > ~/.gpgssh.env
-    . ~/.gpgssh.env
+    gpg-agent --daemon --enable-ssh-support > ~/.gnupg/gpg-agent.env
+    source ~/.gpg-agent.env
     
 Log out of and into your Desktop environment.
 
-Copy the Public key over to the server
+Check if it is working
+
+    ssh-add -l
+    
+Copy the public key over to the server
 
     gpgkey2ssh $AUTHSUBKEY > authorized_keys
-    scp authorized_keys testuser@testserver.tld:~/.ssh/authorized_keys
+    scp authorized_keys user@server:~/.ssh/authorized_keys
+
+Or, alternatively, use ssh-copyid 
+
+    ssh-copyid user@server
     
-Now everytime you ssh into this box ssh should ask for your PIN instead of your passphrase.
+Now when you ssh into this box ssh should ask for your PIN instead of your passphrase.
 
 # References
-
-# GnuPG Notes
 
 http://gagravarr.livejournal.com/137173.html
 
