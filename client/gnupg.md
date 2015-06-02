@@ -2,7 +2,7 @@
 
 ## temporarily change keystore location
 
-Useful for testing and for offline keys. Use Live CD for offline keys!
+Useful for testing and for offline keys. Use Live CD for offline keys! [Tails](https://tails.boum.org) brings all you need in a live CD.
 
     export GNUPGHOME=/save/location
 
@@ -66,6 +66,53 @@ GnuPG no longer allows you to create larger keys. In previous versions, the batc
     Name-Email: EMAIL
     Passphrase: PASSWORD
     EOF
+
+## Offline Key Storage
+
+**This section is for paranoid people only :)**
+
+You can split your secret master key into several parts to store them in different locations. This example uses [Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing).
+We are creating 3 parts of which you only need 2 in order to recover your key. You can change the parameters for your own needs.
+(ssss-split and gfsplit are already installed in [Tails](https://tails.boum.org))
+
+
+### Splitting the Passphrase
+
+    $ ssss-split -t 2 -n 3 -w name_me
+
+Type your password and hit enter. The output should look like the following:
+
+    name_me-1-ef3e98de26ce8400
+    name_me-2-808d8e0fc8779375
+    name_me-3-a5e37c40921f61a4
+
+### Recovering the Passphrase
+
+    $ ssss-combine -t 2
+
+Enter 2 shares separated by newlines:
+
+    Share [1/2]: name_me-1-ef3e98de26ce8400
+    Share [2/2]: name_me-2-808d8e0fc8779375
+
+The output should look like the following:
+
+    Resulting secret: P@ssw0rd
+
+### Splitting the Key
+
+    $ gfsplit -n 2 -m 3 secretKeyFile 
+    $ ls
+
+The output should look like the following:
+
+   secretKeyFile  secretKeyFile.050  secretKeyFile.179  secretKeyFile.193
+
+#### Recovering the Key
+
+    $ gfcombine secretKeyFile.050 secretKeyFile.179 	
+
+done. Your keyfile should be recovered.
 
 ## Smartcard
 
