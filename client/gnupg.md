@@ -1,48 +1,12 @@
 # GnuPG Notes
 
-http://gagravarr.livejournal.com/137173.html
-
-https://www.apache.org/dev/openpgp.html
-
-http://www.eharning.us/gpg/
-
-http://www.narf.ssji.net/~shtrom/wiki/tips/openpgpsmartcard
-
 ## temporarily change keystore location
 
-Useful for testing and for offline keys. Use Live CD for offline keys!
+Useful for testing and for offline keys. Use Live CD for offline keys! [Tails](https://tails.boum.org) brings all you need in a live CD.
 
     export GNUPGHOME=/save/location
 
-## RSA 8192 bit keys
-
-For a 8192 bit master key, you can use GnuPG batch mode.
-
-    gpg --batch --gen-key <<EOF
-    Key-Type: RSA
-    Key-Length: 8192
-    Key-Usage: cert
-    Name-Real: ME
-    Name-Email: EMAIL
-    Passphrase: PASSWORD
-    EOF
-
-If you also want to generate 8192 bit subkeys, you need to modify the GnuPG source.
-
-    sudo apt-get build-dep gnupg
-    apt-get source gnupg
-    cd gnupg-*
-    vi g10/keygen.c
-    # search 4096, replace 8192
-    dpkg-buildpackage -us -uc -nc
-    cd ..
-    dpkg -i gnupg_*.deb
-
 ## some default preferences
-
- * hashing algorithms
- * disable version display
- * set default policy url for signing
 
     cat >>~/.gnupg/gpg.conf <<EOF
     no-version
@@ -53,17 +17,28 @@ If you also want to generate 8192 bit subkeys, you need to modify the GnuPG sour
     cert-policy-url http://www.headstrong.de/keysigning-policy
     EOF
 
+  * hashing algorithms
+  * disable version display
+  * set default policy url for signing
+
 ## key generation
 
-    gpg --gen-key # for master key
+My recommendation: 
+
+    gpg --expert --gen-key # for master key
     KEYID=ABCDABCD
-    gpg --edit-key $KEYID
+    gpg --expert --edit-key $KEYID
     gpg> addkey # repeat for all subkeys
     gpg> quit
     gpg --output $KEYID-revocation-cert.gpg --gen-revoke $KEYID
     gpg --quiet --batch --yes --output $KEYID-secret-subkeys.gpg --export-secret-subkeys $KEYID
     gpg --quiet --batch --yes --output $KEYID-secret-master-key.gpg --export-secret-keys $KEYID
     gpg --quiet --batch --yes --output $KEYID-public.gpg --export $KEYID
+
+  * master key: capability certify ( = for signing keys)
+  * separate subkeys for each other capability
+  * set an expiration date on the master key and the subkeys. remind yourself to rotate subkeys and move the master key expiration date before it expires. i find 6 months to 1 year a reasonable span.
+
 
 ## regular keyring: import only subkeys
 
@@ -77,7 +52,84 @@ If you also want to generate 8192 bit subkeys, you need to modify the GnuPG sour
 
 example: http://gagravarr.org/key-transition-2009-05-06.txt
 
+## RSA 8192 bit keys
+
+You don't really ever need a larger key than 4096. If there's serious advances in breaking 2048+ bit RSA keys, they will go against all keysizes.
+
+GnuPG no longer allows you to create larger keys. In previous versions, the batch mode allowed keys up to 8192 bit:
+
+    gpg --batch --gen-key <<EOF
+    Key-Type: RSA
+    Key-Length: 8192
+    Key-Usage: cert
+    Name-Real: ME
+    Name-Email: EMAIL
+    Passphrase: PASSWORD
+    EOF
+
+## Offline Key Storage
+
+**This section is for paranoid people only :)**
+
+You can split your secret master key into several parts to store them in different locations. This example uses [Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing).
+We are creating 3 parts of which you only need 2 in order to recover your key. You can change the parameters for your own needs.
+(ssss-split and gfsplit are already installed in [Tails](https://tails.boum.org))
+
+
+### Splitting the Passphrase
+
+    $ ssss-split -t 2 -n 3 -w name_me
+
+Type your password and hit enter. The output should look like the following:
+
+    name_me-1-ef3e98de26ce8400
+    name_me-2-808d8e0fc8779375
+    name_me-3-a5e37c40921f61a4
+
+### Recovering the Passphrase
+
+    $ ssss-combine -t 2
+
+Enter 2 shares separated by newlines:
+
+    Share [1/2]: name_me-1-ef3e98de26ce8400
+    Share [2/2]: name_me-2-808d8e0fc8779375
+
+The output should look like the following:
+
+    Resulting secret: P@ssw0rd
+
+### Splitting the Key
+
+    $ gfsplit -n 2 -m 3 secretKeyFile 
+    $ ls
+
+The output should look like the following:
+
+   secretKeyFile  secretKeyFile.050  secretKeyFile.179  secretKeyFile.193
+
+#### Recovering the Key
+
+    $ gfcombine secretKeyFile.050 secretKeyFile.179 	
+
+done. Your keyfile should be recovered.
+
 ## Smartcard
+
+  * Reader: https://shop.kernelconcepts.de/product_info.php?products_id=119
+    * use reader with PIN-pad for additional security
+  
+  * Javacard: Open Source Java Applets available (running on closed source OS)
+    * can't find any cards that support keys larger than 2048
+    * https://subgraph.com/cards/
+    * http://smartcardsource.com/
+    * https://www.fi.muni.cz/~xsvenda/jcsupport.html
+
+  * Basiccard: Closed Source
+    * developers have to sign NDA -> no open source?
+    * G10Code (Werner Koch) Smartcard: https://shop.kernelconcepts.de/product_info.php?products_id=42
+    * supports 4096 bit keys (Smartcard v2, GnuPG >= 2.0.18)
+    * https://shop.kernelconcepts.de/product_info.php?products_id=42
 
 ### Install
 
@@ -91,6 +143,8 @@ example: http://gagravarr.org/key-transition-2009-05-06.txt
 
 ### Generate Subkeys on Smartcard
 
+You don't actually want to do that because you will not have backup, except maybe for authentication subkeys.
+
     gpg --edit-key $KEYID
     gpg> addcardkey
 
@@ -101,10 +155,12 @@ Make a local copy first, as subkey will be transferred to the card and the local
     gpg -a --export-secret-keys $KEYID > $KEYID.key.asc
 
     gpg --edit-key $KEYID
+    gpg> toggle
     gpg> key 1 # select encryption subkey
     gpg> keytocard
     gpg> key 2 # select signature subkey
     gpg> keytocard
+    ...
     gpg> save
 
 ### Authenticate to a SSH server with GPG Smartcard
@@ -120,14 +176,32 @@ Put the following in a text file, make sure it is run everytime your
 Desktop environment or window manager starts up:
 
     #!/bin/sh
-    gpg-agent --daemon --enable-ssh-support > ~/.gpgssh.env
-    . ~/.gpgssh.env
+    gpg-agent --daemon --enable-ssh-support > ~/.gnupg/gpg-agent.env
+    source ~/.gpg-agent.env
     
 Log out of and into your Desktop environment.
 
-Copy the Public key over to the server
+Check if it is working
+
+    ssh-add -l
+    
+Copy the public key over to the server
 
     gpgkey2ssh $AUTHSUBKEY > authorized_keys
-    scp authorized_keys testuser@testserver.tld:~/.ssh/authorized_keys
+    scp authorized_keys user@server:~/.ssh/authorized_keys
+
+Or, alternatively, use ssh-copyid 
+
+    ssh-copyid user@server
     
-Now everytime you ssh into this box ssh should ask for your PIN instead of your passphrase.
+Now when you ssh into this box ssh should ask for your PIN instead of your passphrase.
+
+# References
+
+http://gagravarr.livejournal.com/137173.html
+
+https://www.apache.org/dev/openpgp.html
+
+http://www.eharning.us/gpg/
+
+http://www.narf.ssji.net/~shtrom/wiki/tips/openpgpsmartcard

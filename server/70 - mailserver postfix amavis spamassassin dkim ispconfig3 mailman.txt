@@ -25,12 +25,12 @@ POSTGREY_OPTS="--inet=10023 --max-age=365"
 ## http://koti.kapsi.fi/ptk/postfix/postfix-tls-cacert.shtml
 apt-get install ca-certificates
 mkdir /etc/postfix/tls
-openssl req -nodes -newkey rsa:2048 -keyout /etc/postfix/tls/smtpd.key -out /etc/postfix/tls/smtpd.csr
+openssl req -nodes -sha256 -newkey rsa:2048 -keyout /etc/postfix/tls/smtpd.key -out /etc/postfix/tls/smtpd.csr
 # get smtpd.csr signed by cacert, put the returned cert into /etc/postfix/tls/smtpd.crt
 openssl gendh -out /etc/postfix/tls/dh_512.pem -2 512
 openssl gendh -out /etc/postfix/tls/dh_1024.pem -2 1024
 openssl ecparam -out /etc/postfix/tls/smtpd-ecdsa.key -name sect571r1 -genkey
-openssl req -new -nodes -key /etc/postfix/tls/smtpd-ecdsa.key -outform pem -out /etc/postfix/tls/smtpd-ecdsa.csr
+openssl req -new -nodes -sha256 -key /etc/postfix/tls/smtpd-ecdsa.key -outform pem -out /etc/postfix/tls/smtpd-ecdsa.csr
 # get smtpd-ecdsa.csr signed by cacert, put the returned cert into smtpd-ecdsa.crt
 chmod 400 /etc/postfix/tls/*
 # /etc/postfix/main.cf
