@@ -1,0 +1,10 @@
+## prosody
+
+cd /usr/lib/prosody/modules
+# force certain password length
+wget https://prosody-modules.googlecode.com/hg/mod_password_policy/mod_password_policy.lua
+# web interface for registration with recaptcha (in-band registration overrun by spammers/bots)
+wget https://prosody-modules.googlecode.com/hg/mod_register_web/mod_register_web.lua
+# maybe?
+# https://prosody-modules.googlecode.com/hg/mod_register_json/
+
