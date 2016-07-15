@@ -4,8 +4,10 @@
 
 # GLS
 
-    aqbanking-cli dbinit
-    aqhbci-tool4 adduser -N openlab -u VRK000xyz -b VRK0000xyz -s https://hbci-pintan.gad.de/cgi-bin/hbciservlet -t pintan --hbciversion=300
+    # aqbanking-cli dbinit ?
+    USER=VRK000xxxxxxx
+    BLZ=43060967
+    aqhbci-tool4 adduser -N openlab -u $USER -b $BLZ -s https://hbci-pintan.gad.de/cgi-bin/hbciservlet -t pintan --hbciversion=300
     aqhbci-tool4 getsysid
     aqbanking-cli request --balance
 
