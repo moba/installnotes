@@ -4,8 +4,12 @@ vmbuilder kvm ubuntu --suite xenial --flavour virtual --addpkg linux-image-gener
 
 # mount
 
-qemu-nbd -c /dev/nbd0 /vpool/KVM/imafe.qcow2
+modprobe nbd max_part=16
+qemu-nbd -c /dev/nbd0 /vpool/KVM/image.qcow2
 mount /dev/nbd0p1 /mointpoint
+
+umount /mountpoint
+qemu-nbd -d /dev/nbd0 # disconnect
 
 # ip assignment
 
@@ -20,11 +24,11 @@ virsh net-update default add ip-dhcp-host "<host mac='$MAC' name='$NAME' ip='$IP
 GRUB_CMDLINE_LINUX_DEFAULT="serial=tty0 console=tty0 console=ttyS0"
 GRUB_TERMINAL="serial console"
 
-## clone
+# clone
 
 virt-clone -o this-vm -n that-vm --auto-clone -f new_diskfile
 
-## file system passthrough
+# file system passthrough
 
 virsh edit $guest
 
