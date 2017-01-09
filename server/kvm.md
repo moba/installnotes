@@ -2,7 +2,13 @@
 
 vmbuilder kvm ubuntu --suite xenial --flavour virtual --addpkg linux-image-generic --addpkg=unattended-upgrades --addpkg=openssh-server -addpkg=acpid --arch amd64 --libvirt qemu:///system --user $USERNAME --name $HOSTNAME --hostname=$HOSTNAME --pass $PASSWORD
 
-# mount
+# virsh
+
+virsh shutdown $name
+virsh start $name --console
+virsh destroy $name # immediately, rip power cord
+
+# mount container
 
 modprobe nbd max_part=16
 qemu-nbd -c /dev/nbd0 /vpool/KVM/image.qcow2
@@ -27,6 +33,10 @@ GRUB_TERMINAL="serial console"
 # clone
 
 virt-clone -o this-vm -n that-vm --auto-clone -f new_diskfile
+
+# cpu passthrough
+
+    <cpu mode='host-passthrough'/>
 
 # file system passthrough
 
