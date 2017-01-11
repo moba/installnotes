@@ -35,6 +35,8 @@ GRUB_TERMINAL="serial console"
 
 virt-clone -o this-vm -n new-vm --auto-clone -f new_diskfile
 virt-sysprep -d new-vm --hostname newhostname
+...
+new-vm# dpkg-reconfigure openssh-server
 
 # cpu passthrough
 
