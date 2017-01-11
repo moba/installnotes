@@ -1,6 +1,6 @@
 # create
 
-vmbuilder kvm ubuntu --suite xenial --flavour virtual --addpkg linux-image-generic --addpkg=unattended-upgrades --addpkg=openssh-server -addpkg=acpid --arch amd64 --libvirt qemu:///system --user $USERNAME --name $HOSTNAME --hostname=$HOSTNAME --pass $PASSWORD
+virt-install --name template-yakkety --ram 2048 --disk path=/vpool/KVM/templates/yakkety-base.qcow2,size=30,bus=virtio --vcpus 2 --cpu host --os-type linux --os-variant ubuntu16.04 --network bridge=br0,model=virtio --graphics none --console pty,target_type=serial --extra-args 'console=ttyS0,115200n8 serial' --location 'http://de.archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/'
 
 # virsh
 
