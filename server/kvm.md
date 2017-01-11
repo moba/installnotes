@@ -12,7 +12,8 @@ virsh destroy $name # immediately, rip power cord
 
 modprobe nbd max_part=16
 qemu-nbd -c /dev/nbd0 /vpool/KVM/image.qcow2
-mount /dev/nbd0p1 /mointpoint
+kpartx -a /dev/nbd0
+miount /dev/nbd0p1 /mointpoint
 
 umount /mountpoint
 qemu-nbd -d /dev/nbd0 # disconnect
@@ -32,7 +33,8 @@ GRUB_TERMINAL="serial console"
 
 # clone
 
-virt-clone -o this-vm -n that-vm --auto-clone -f new_diskfile
+virt-clone -o this-vm -n new-vm --auto-clone -f new_diskfile
+virt-sysprep -d new-vm --hostname newhostname
 
 # cpu passthrough
 
