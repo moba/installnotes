@@ -1,9 +1,10 @@
-echo "deb http://ftp.debian.org/debian jessie-backports main" >  /etc/apt/sources.list.d/jessie-backports.list
-apt-get update
-apt-get install certbot
+    echo "deb http://ftp.debian.org/debian jessie-backports main" >  /etc/apt/sources.list.d/jessie-backports.list
+    apt-get update
+    apt-get install certbot
 
 /usr/local/bin/certbot-nosudo:
 
+```
 #!/bin/sh
 #
 # file: certbot-nosudo
@@ -22,6 +23,7 @@ chown certbot:certbot /var/www/letsencrypt/
 
 adduser certbot
 su certbot
+```
 
 $ /home/certbot/certbot-nosudo certonly --webroot -w /var/www/letsencrypt/ -d example.org -d www.example.org
 
@@ -32,6 +34,7 @@ $ crontab -e
 
 ## postfix
 
+```
 smtpd_tls_cert_file=/home/certbot/.certbot/config/live/mail.example.org/fullchain.pem
 smtpd_tls_key_file=/home/certbot/.certbot/config/live/mail.example.org/privkey.pem
 smtpd_use_tls=yes
@@ -41,9 +44,11 @@ smtpd_tls_ciphers = high
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtp_tls_security_level = encrypt
+```
 
 ## nginx
 
+```
         ssl_certificate /home/certbot/.certbot/config/live/lists.techcultivation.org/fullchain.pem;
         ssl_certificate_key /home/certbot/.certbot/config/live/lists.techcultivation.org/privkey.pem;
-
+```
