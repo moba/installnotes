@@ -2,6 +2,11 @@
 
 virt-install --name template-yakkety --ram 2048 --disk path=/vpool/KVM/templates/yakkety-base.qcow2,size=30,bus=virtio --vcpus 2 --cpu host --os-type linux --os-variant ubuntu16.04 --network bridge=br0,model=virtio --graphics none --console pty,target_type=serial --extra-args 'console=ttyS0,115200n8 serial' --location 'http://de.archive.ubuntu.com/ubuntu/dists/yakkety/main/installer-amd64/'
 
+in VM:
+
+ip address add 217.197.90.xx peer 217.197.91.137 dev eth0
+ip route add default via 217.197.91.137 dev eth0 onlink
+
 # virsh
 
 virsh shutdown $name
@@ -13,7 +18,7 @@ virsh destroy $name # immediately, rip power cord
 modprobe nbd max_part=16
 qemu-nbd -c /dev/nbd0 /vpool/KVM/image.qcow2
 kpartx -a /dev/nbd0
-miount /dev/nbd0p1 /mointpoint
+mount /dev/nbd0p1 /mointpoint
 
 umount /mountpoint
 qemu-nbd -d /dev/nbd0 # disconnect
@@ -24,7 +29,7 @@ virsh net-update default add ip-dhcp-host "<host mac='$MAC' name='$NAME' ip='$IP
 
 # fix virsh console
 
- - mount filesystem
+## mount filesystem
 
 ## /etc/default/grub
 
