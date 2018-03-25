@@ -2,12 +2,16 @@
 
 REMOVE_APPS="Drive Duo Gmail2 Music2 Videos XperiaTransferMobile-release com.amazon.mShop.android.shopping com.amazon.kindle com.facebook.appmanager com.facebook.katana com.s.antivirus com.sonymobile.xperialounge.services com.spotify.music" 
 
-BACKUPDIR="/sdcard/Backups/SystemApps"
+REMOVE_PRIV_APPS="com.facebook.services com.facebook.system com.sonymobile.retaildemo sonyentrance2-release"
+
+BACKUPDIR="/sdcard/Backups"
 SYSTEMDIR="/system/app"
+PRIVDIR="/system/priv-app"
 
 ADB_COMMAND=$(cat << END
 su
-mkdir -p /sdcard/Backups/SystemApps
+mkdir -p $BACKUPDIR/SystemApps
+mkdir -p $BACKUPDIR/PrivApps
 mount -o rw,remount /system
 END
 )
@@ -15,6 +19,11 @@ END
 for app in $REMOVE_APPS
 do
     ADB_COMMAND+="\nmv $SYSTEMDIR/$app $BACKUPDIR"
+done
+
+for app in $REMOVE_PRIV_APPS
+do
+    ADB_COMMAND+="\nmv $PRIVDIR/$app $BACKUPDIR"
 done
 
 ADB_COMMAND+="\nmount -o ro,remount /system\nexit\nexit"
