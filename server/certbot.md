@@ -2,7 +2,19 @@
     apt-get update
     apt-get install certbot
 
-/usr/local/bin/certbot-nosudo:
+# webroot way
+
+```
+certbot certonly --webroot -w /var/www/example -d example.com -d www.example.com -w /var/www/thing -d thing.is -d m.thing.is
+```
+
+# crontab
+
+```
+0 5 * * 0 certbot -q renew --renew-hook "/usr/sbin/service nginx reload; /usr/sbin/service postfix reload"
+```
+
+# /usr/local/bin/certbot-nosudo:
 
 ```
 #!/bin/sh
