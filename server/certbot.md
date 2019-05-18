@@ -1,5 +1,3 @@
-    echo "deb http://ftp.debian.org/debian jessie-backports main" >  /etc/apt/sources.list.d/jessie-backports.list
-    apt-get update
     apt-get install certbot
 
 # webroot way
@@ -8,41 +6,9 @@
 certbot certonly --webroot -w /var/www/example -d example.com -d www.example.com -w /var/www/thing -d thing.is -d m.thing.is
 ```
 
-# crontab
+# deploy-hook!
 
-```
-0 5 * * 0 certbot -q renew --renew-hook "/usr/sbin/service nginx reload; /usr/sbin/service postfix reload"
-```
-
-# /usr/local/bin/certbot-nosudo:
-
-```
-#!/bin/sh
-#
-# file: certbot-nosudo
-if [ -z $LETSENCRYPT_NOSUDO_DIR ]; then
-   LETSENCRYPT_NOSUDO_DIR=~/.certbot
-fi
-certbot \
-  --config-dir ${LETSENCRYPT_NOSUDO_DIR}/config \
-  --logs-dir ${LETSENCRYPT_NOSUDO_DIR}/logs \
-  --work-dir ${LETSENCRYPT_NOSUDO_DIR} \
-  $*
-exit $?
-
-mkdir /var/www/letsencrypt/
-chown certbot:certbot /var/www/letsencrypt/
-
-adduser certbot
-su certbot
-```
-
-$ /home/certbot/certbot-nosudo certonly --webroot -w /var/www/letsencrypt/ -d example.org -d www.example.org
-
-$ crontab -e
-
-0 4 * * 0,4 /usr/local/bin/certbot-nosudo renew --quiet --noninteractive --no-self-upgrade
-
+/etc/letsencrypt/renewal-hooks/deploy/restart-services.sh
 
 ## postfix
 
